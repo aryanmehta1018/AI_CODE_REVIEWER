@@ -28,7 +28,7 @@ function Dashboard() {
         localStorage.getItem("token");
 
       const response = await axios.post(
-        "http://127.0.0.1:8000/review",
+        `${import.meta.env.VITE_API_URL}/review`,
         {
           code,
           language,

@@ -13,7 +13,7 @@ function Signup() {
   async function handleSignup() {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8000/signup",
+        `${import.meta.env.VITE_API_URL}/signup`,
         {
           email,
           password,

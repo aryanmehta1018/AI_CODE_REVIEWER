@@ -24,7 +24,7 @@ function MyReviews() {
           localStorage.getItem("token");
 
         const response = await axios.get(
-          "http://127.0.0.1:8000/my-reviews",
+          `${import.meta.env.VITE_API_URL}/my-reviews`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -61,7 +61,7 @@ function MyReviews() {
         localStorage.getItem("token");
 
       await axios.delete(
-        `http://127.0.0.1:8000/review/${reviewId}`,
+        `${import.meta.env.VITE_API_URL}/review/${reviewId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`
