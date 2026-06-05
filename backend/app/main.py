@@ -22,6 +22,6 @@ app.add_middleware(
 )
 app.include_router(auth_router)
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 def home():
     return {"message": "Backend is running"}
