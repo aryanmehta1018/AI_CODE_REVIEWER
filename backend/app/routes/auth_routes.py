@@ -162,3 +162,11 @@ def delete_review(
     return {
         "message": "Review deleted"
     }
+
+@router.post("/github-review")
+def github_review(data: dict):
+
+    return {
+        "message": "GitHub endpoint working",
+        "repo": data.get("repo_url")
+    }
