@@ -201,7 +201,7 @@ def fetch_file_contents(
             )
 
             combined_code += (
-                raw_response.text[:3000]
+                raw_response.text
             )
 
         except:
