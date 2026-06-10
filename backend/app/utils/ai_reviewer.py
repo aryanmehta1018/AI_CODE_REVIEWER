@@ -177,25 +177,44 @@ def fetch_file_contents(
 
     for file_path in files:
 
-        url = (
-            f"https://raw.githubusercontent.com/"
-            f"{owner}/{repo}/main/{file_path}"
-        )
-
         try:
 
+            github_url = (
+                f"https://api.github.com/repos/"
+                f"{owner}/{repo}/contents/{file_path}"
+            )
+
             response = requests.get(
-                url,
+                github_url,
                 timeout=10
             )
 
-            if response.status_code == 200:
+            if response.status_code != 200:
+                continue
 
-                combined_code += (
-                    f"\n\nFILE: {file_path}\n"
+            file_data = response.json()
+
+            download_url = (
+                file_data.get(
+                    "download_url"
                 )
+            )
 
-                combined_code += response.text
+            if not download_url:
+                continue
+
+            raw_response = requests.get(
+                download_url,
+                timeout=10
+            )
+
+            combined_code += (
+                f"\n\nFILE: {file_path}\n"
+            )
+
+            combined_code += (
+                raw_response.text
+            )
 
         except:
             continue

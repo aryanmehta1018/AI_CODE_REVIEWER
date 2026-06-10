@@ -182,7 +182,13 @@ def github_review(data: dict):
         repo
     )
 
+    repo_code = fetch_file_contents(
+        owner,
+        repo,
+        files
+    )
+
     return {
-        "files_found": len(files),
-        "files": files[:20]
+        "files_analyzed": len(files),
+        "repo_code_length": len(repo_code)
     }
