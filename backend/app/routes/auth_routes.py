@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+import requests
 from app.utils.jwt_handler import create_access_token
 from app.schemas.user_schema import UserCreate, UserLogin
 from app.models.user import User
@@ -177,12 +178,17 @@ def github_review(data: dict):
         data["repo_url"]
     )
 
-    files = collect_code_files(
-        owner,
-        repo
+    url = (
+        f"https://api.github.com/repos/"
+        f"{owner}/{repo}/contents"
     )
 
+    response = requests.get(url)
+
     return {
-        "files_analyzed": len(files),
-        "files": files
+        "status_code": response.status_code,
+        "response_type": str(type(response.json())),
+        "first_item": response.json()[0]
+        if response.status_code == 200
+        else None
     }
