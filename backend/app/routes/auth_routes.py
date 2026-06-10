@@ -192,6 +192,6 @@ def github_review(data: dict):
     )
 
     return {
-        "files_analyzed": len(files),
-        "review": review
+        "files_found": len(files),
+        "repo_code_length": len(repo_code)
     }
