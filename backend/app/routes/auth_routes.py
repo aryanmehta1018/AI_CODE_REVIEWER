@@ -176,22 +176,7 @@ def github_review(data: dict):
         data["repo_url"]
     )
 
-    files = collect_code_files(
-        owner,
-        repo
-    )
-
-    repo_code = fetch_file_contents(
-        owner,
-        repo,
-        files
-    )
-
-    review = review_repository(
-        repo_code
-    )
-
     return {
-        "files_found": len(files),
-        "repo_code_length": len(repo_code)
+        "owner": owner,
+        "repo": repo
     }
