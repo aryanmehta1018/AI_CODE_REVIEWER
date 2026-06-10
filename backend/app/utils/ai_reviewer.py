@@ -3,6 +3,8 @@ import os
 import ast
 import requests
 
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+
 client = OpenAI(
     api_key=os.getenv("GROQ_API_KEY"),
     base_url="https://api.groq.com/openai/v1"
@@ -127,7 +129,12 @@ def collect_code_files(
         f"{owner}/{repo}/contents/{path}"
     )
 
-    response = requests.get(url)
+    response=requests.get(
+        url,
+        headers={
+            "Authorization": f"Bearer {GITHUB_TOKEN}"
+        }
+    )
 
     if response.status_code != 200:
         return collected
@@ -186,6 +193,9 @@ def fetch_file_contents(
 
             response = requests.get(
                 github_url,
+                headers={
+                    "Authorization": f"Bearer {GITHUB_TOKEN}"
+                },
                 timeout=10
             )
 
@@ -205,6 +215,9 @@ def fetch_file_contents(
 
             raw_response = requests.get(
                 download_url,
+                headers={
+                    "Authorization": f"Bearer {GITHUB_TOKEN}"
+                },
                 timeout=10
             )
 
@@ -280,7 +293,12 @@ def test_github_api(owner, repo):
         f"{owner}/{repo}/contents"
     )
 
-    response = requests.get(url)
+    response = requests.get(
+        url,
+        headers={
+            "Authorization": f"Bearer {GITHUB_TOKEN}"
+        }
+    )
 
     return {
         "status_code": response.status_code,
