@@ -1,6 +1,7 @@
 from openai import OpenAI
 import os
 import ast
+import requests
 
 client = OpenAI(
     api_key=os.getenv("GROQ_API_KEY"),
@@ -130,6 +131,26 @@ def review_code(
     Code:
     {code}
     """
+def get_repo_files(repo_url):
+
+    parts = repo_url.rstrip("/").split("/")
+
+    owner = parts[-2]
+    repo = parts[-1]
+
+    github_url = (
+        f"https://api.github.com/repos/"
+        f"{owner}/{repo}/contents"
+    )
+
+    response = requests.get(github_url)
+
+    if response.status_code != 200:
+        raise Exception(
+            "Repository not found"
+        )
+
+    return response.json()
 
     try:
         response = client.chat.completions.create(

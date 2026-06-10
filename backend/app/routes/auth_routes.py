@@ -8,7 +8,10 @@ from app.utils.auth_dependency import get_current_user
 from app.db.database import SessionLocal
 from app.utils.auth_dependency import get_current_user
 from app.schemas.review_schema import CodeReviewRequest
-from app.utils.ai_reviewer import review_code
+from app.utils.ai_reviewer import (
+    review_code,
+    get_repo_files
+)
 from fastapi import Depends
 import json
 from app.models.review import Review
@@ -166,7 +169,8 @@ def delete_review(
 @router.post("/github-review")
 def github_review(data: dict):
 
-    return {
-        "message": "GitHub endpoint working",
-        "repo": data.get("repo_url")
-    }
+    files = get_repo_files(
+        data["repo_url"]
+    )
+
+    return files
