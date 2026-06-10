@@ -252,6 +252,20 @@ Additional Notes:
             "error": str(e)
         }
 
+def test_github_api(owner, repo):
+
+    url = (
+        f"https://api.github.com/repos/"
+        f"{owner}/{repo}/contents"
+    )
+
+    response = requests.get(url)
+
+    return {
+        "status_code": response.status_code,
+        "items": len(response.json())
+    }
+
 def review_code(
         code,
         language

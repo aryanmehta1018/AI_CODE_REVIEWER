@@ -13,7 +13,8 @@ from app.utils.ai_reviewer import (
     get_repo_info,
     collect_code_files,
     fetch_file_contents,
-    review_repository
+    review_repository,
+    test_github_api
 )
 from fastapi import Depends
 import json
@@ -176,7 +177,7 @@ def github_review(data: dict):
         data["repo_url"]
     )
 
-    return {
-        "owner": owner,
-        "repo": repo
-    }
+    return test_github_api(
+        owner,
+        repo
+    )
