@@ -147,7 +147,7 @@ def collect_code_files(owner, repo):
         if path.endswith(ALLOWED_EXTENSIONS):
             collected.append(path)
 
-        if len(collected) >= 30:
+        if len(collected) >= 10:
             break
 
     return collected
@@ -201,7 +201,7 @@ def fetch_file_contents(
             )
 
             combined_code += (
-                raw_response.text
+                raw_response.text[:3000]
             )
 
         except:
