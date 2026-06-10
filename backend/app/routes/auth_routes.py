@@ -177,7 +177,12 @@ def github_review(data: dict):
         data["repo_url"]
     )
 
-    return test_github_api(
+    files = collect_code_files(
         owner,
         repo
     )
+
+    return {
+        "files_found": len(files),
+        "files": files[:10]
+    }

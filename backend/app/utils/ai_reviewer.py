@@ -153,15 +153,9 @@ def collect_code_files(
 
         elif item["type"] == "file":
 
-            filename = item["name"].lower()
-
-            if filename.endswith(
-                ALLOWED_EXTENSIONS
-            ):
-
-                collected.append(
-                    item["path"]
-                )
+            collected.append(
+                item["path"]
+            )
 
     return collected
 
