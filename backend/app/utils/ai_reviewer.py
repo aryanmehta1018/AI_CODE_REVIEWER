@@ -136,7 +136,7 @@ def collect_code_files(
 
     for item in items:
 
-        if len(collected) >= 20:
+        if len(collected) >= 30:
             return collected
 
         if item["type"] == "dir":
@@ -164,6 +164,93 @@ def collect_code_files(
                 )
 
     return collected
+
+def fetch_file_contents(
+    owner,
+    repo,
+    files
+):
+
+    combined_code = ""
+
+    for file_path in files:
+
+        url = (
+            f"https://raw.githubusercontent.com/"
+            f"{owner}/{repo}/main/{file_path}"
+        )
+
+        try:
+
+            response = requests.get(
+                url,
+                timeout=10
+            )
+
+            if response.status_code == 200:
+
+                combined_code += (
+                    f"\n\nFILE: {file_path}\n"
+                )
+
+                combined_code += response.text
+
+        except:
+            continue
+
+    return combined_code
+
+def review_repository(repo_code):
+
+    prompt = f"""
+Review this GitHub repository strictly.
+
+Scoring Guide:
+
+0-30 = Unusable / severe bugs
+31-50 = Poor quality
+51-70 = Average
+71-85 = Good
+86-95 = Very good
+96-100 = Production quality
+
+Use the full range.
+
+Repository Code:
+
+{repo_code}
+
+Provide:
+
+Score:
+Bugs:
+Improvements:
+Optimizations:
+Additional Notes:
+"""
+
+    try:
+
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        return parse_review(
+            response.choices[0]
+            .message.content
+        )
+
+    except Exception as e:
+
+        return {
+            "error": str(e)
+        }
 
 def review_code(
         code,
@@ -216,7 +303,7 @@ def review_code(
     Code:
     {code}
     """
-    
+
     try:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",

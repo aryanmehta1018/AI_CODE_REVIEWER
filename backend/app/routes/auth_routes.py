@@ -11,7 +11,9 @@ from app.schemas.review_schema import CodeReviewRequest
 from app.utils.ai_reviewer import (
     review_code,
     get_repo_info,
-    collect_code_files
+    collect_code_files,
+    fetch_file_contents,
+    review_repository
 )
 from fastapi import Depends
 import json
@@ -179,7 +181,17 @@ def github_review(data: dict):
         repo
     )
 
+    repo_code = fetch_file_contents(
+        owner,
+        repo,
+        files
+    )
+
+    review = review_repository(
+        repo_code
+    )
+
     return {
-        "files_found": len(files),
-        "files": files
+        "files_analyzed": len(files),
+        "review": review
     }
