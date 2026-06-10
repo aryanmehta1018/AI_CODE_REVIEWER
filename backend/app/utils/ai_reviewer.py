@@ -241,10 +241,10 @@ Additional Notes:
             ]
         )
 
-        return parse_review(
-            response.choices[0]
-            .message.content
-        )
+        return {
+            "raw_response":
+            response.choices[0].message.content
+        }
 
     except Exception as e:
 
