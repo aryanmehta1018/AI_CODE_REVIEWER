@@ -80,6 +80,91 @@ def check_syntax(code, language):
             }
         ]
 
+
+ALLOWED_EXTENSIONS = (
+    ".py",
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".java",
+    ".cpp",
+    ".c",
+    ".cs",
+    ".go",
+    ".php"
+)
+
+SKIP_FOLDERS = {
+    "node_modules",
+    "dist",
+    "build",
+    ".git",
+    "coverage"
+}
+
+def get_repo_info(repo_url):
+
+    parts = repo_url.rstrip("/").split("/")
+
+    owner = parts[-2]
+    repo = parts[-1]
+
+    return owner, repo
+
+def collect_code_files(
+    owner,
+    repo,
+    path="",
+    collected=None
+):
+
+    if collected is None:
+        collected = []
+
+    url = (
+        f"https://api.github.com/repos/"
+        f"{owner}/{repo}/contents/{path}"
+    )
+
+    response = requests.get(url)
+
+    if response.status_code != 200:
+        return collected
+
+    items = response.json()
+
+    for item in items:
+
+        if len(collected) >= 20:
+            return collected
+
+        if item["type"] == "dir":
+
+            if item["name"] in SKIP_FOLDERS:
+                continue
+
+            collect_code_files(
+                owner,
+                repo,
+                item["path"],
+                collected
+            )
+
+        elif item["type"] == "file":
+
+            filename = item["name"].lower()
+
+            if filename.endswith(
+                ALLOWED_EXTENSIONS
+            ):
+
+                collected.append(
+                    item["path"]
+                )
+
+    return collected
+
 def review_code(
         code,
         language
@@ -131,27 +216,7 @@ def review_code(
     Code:
     {code}
     """
-def get_repo_files(repo_url):
-
-    parts = repo_url.rstrip("/").split("/")
-
-    owner = parts[-2]
-    repo = parts[-1]
-
-    github_url = (
-        f"https://api.github.com/repos/"
-        f"{owner}/{repo}/contents"
-    )
-
-    response = requests.get(github_url)
-
-    if response.status_code != 200:
-        raise Exception(
-            "Repository not found"
-        )
-
-    return response.json()
-
+    
     try:
         response = client.chat.completions.create(
             model="llama-3.3-70b-versatile",

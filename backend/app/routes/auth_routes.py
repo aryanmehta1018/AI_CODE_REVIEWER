@@ -10,7 +10,8 @@ from app.utils.auth_dependency import get_current_user
 from app.schemas.review_schema import CodeReviewRequest
 from app.utils.ai_reviewer import (
     review_code,
-    get_repo_files
+    get_repo_info,
+    collect_code_files
 )
 from fastapi import Depends
 import json
@@ -169,8 +170,16 @@ def delete_review(
 @router.post("/github-review")
 def github_review(data: dict):
 
-    files = get_repo_files(
+    owner, repo = get_repo_info(
         data["repo_url"]
     )
 
-    return files
+    files = collect_code_files(
+        owner,
+        repo
+    )
+
+    return {
+        "files_found": len(files),
+        "files": files
+    }
