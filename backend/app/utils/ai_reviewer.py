@@ -114,63 +114,41 @@ def get_repo_info(repo_url):
 
     return owner, repo
 
-def collect_code_files(
-    owner,
-    repo,
-    path="",
-    collected=None
-):
-
-    if collected is None:
-        collected = []
+def collect_code_files(owner, repo):
 
     url = (
         f"https://api.github.com/repos/"
-        f"{owner}/{repo}/contents/{path}"
+        f"{owner}/{repo}/git/trees/main?recursive=1"
     )
 
-    response=requests.get(
+    response = requests.get(
         url,
         headers={
-            "Authorization": f"Bearer {GITHUB_TOKEN}"
-        }
+            "Authorization": f"Bearer {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github+json"
+        },
+        timeout=20
     )
 
     if response.status_code != 200:
-        return collected
+        return []
 
-    items = response.json()
+    data = response.json()
 
-    for item in items:
+    collected = []
 
-        
+    for item in data.get("tree", []):
 
-        if item["type"] == "dir":
+        if item.get("type") != "blob":
+            continue
 
-            if item["name"] in SKIP_FOLDERS:
-                continue
+        path = item.get("path", "")
 
-            collect_code_files(
-                owner,
-                repo,
-                item["path"],
-                collected
-            )
+        if path.endswith(ALLOWED_EXTENSIONS):
+            collected.append(path)
 
-        elif item["type"] == "file":
-
-            filename = item["name"].lower()
-
-            if filename.endswith(
-                ALLOWED_EXTENSIONS
-            ):
-
-                collected.append(
-                    item["path"]
-                )
-
-                if len(collected) >= 30:
-                    return collected
+        if len(collected) >= 30:
+            break
 
     return collected
 
@@ -215,9 +193,6 @@ def fetch_file_contents(
 
             raw_response = requests.get(
                 download_url,
-                headers={
-                    "Authorization": f"Bearer {GITHUB_TOKEN}"
-                },
                 timeout=10
             )
 
