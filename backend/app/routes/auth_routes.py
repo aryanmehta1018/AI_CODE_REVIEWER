@@ -182,4 +182,7 @@ def github_review(data: dict):
         repo
     )
 
-    return files
+    return {
+        "files_found": len(files),
+        "files": files[:20]
+    }

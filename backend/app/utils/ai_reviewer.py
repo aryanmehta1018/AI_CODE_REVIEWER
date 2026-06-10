@@ -136,8 +136,7 @@ def collect_code_files(
 
     for item in items:
 
-        if len(collected) >= 30:
-            return collected
+        
 
         if item["type"] == "dir":
 
@@ -153,9 +152,18 @@ def collect_code_files(
 
         elif item["type"] == "file":
 
-            collected.append(
-                item["path"]
-            )
+            filename = item["name"].lower()
+
+            if filename.endswith(
+                ALLOWED_EXTENSIONS
+            ):
+
+                collected.append(
+                    item["path"]
+                )
+
+                if len(collected) >= 30:
+                    return collected
 
     return collected
 
