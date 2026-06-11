@@ -309,7 +309,7 @@ def review_repository_files(
             review = review_code(
                 code,
                 language
-            )
+            )["review"]
 
             results.append({
                 "file": file_path,

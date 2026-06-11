@@ -38,6 +38,52 @@ function GithubReview() {
         );
 
       setResult(response.data);
+      {result && (
+        <div className="repo-results">
+
+          <h2>
+            Files Analyzed: {result.files_analyzed}
+          </h2>
+
+          {result.reviews.map((item, index) => (
+
+            <div
+              key={index}
+              className="review-card"
+            >
+
+              <h3>{item.file}</h3>
+
+              <p>
+                Score:
+                {" "}
+                {item.review.review.score}
+              </p>
+
+              <h4>Bugs</h4>
+
+              <pre>
+                {item.review.review.bugs}
+              </pre>
+
+              <h4>Improvements</h4>
+
+              <pre>
+                {item.review.review.improvements}
+              </pre>
+
+              <h4>Optimizations</h4>
+
+              <pre>
+                {item.review.review.optimizations}
+              </pre>
+
+            </div>
+
+          ))}
+
+        </div>
+      )}
 
     } catch (err) {
 
