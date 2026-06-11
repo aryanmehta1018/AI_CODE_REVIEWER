@@ -1,7 +1,6 @@
 from openai import OpenAI
 import os
 import ast
-import requests
 
 
 client = OpenAI(
@@ -92,39 +91,91 @@ def review_code(
 
     Review the following code strictly.
 
-    Scoring Guide:
+    Score the code using EXACTLY these categories:
 
-    0-30 = Unusable / severe bugs
-    31-50 = Poor quality
-    51-70 = Average
-    71-85 = Good
-    86-95 = Very good
-    96-100 = Production quality
+    CORRECTNESS (0-20)
 
-    Use the full range of scores.
+    * Logic correctness
+    * Bug likelihood
+    * Edge case handling
 
-    Give your response in this exact format:
+    READABILITY (0-20)
 
-    SCORE: <number between 0 and 100>
+    * Naming quality
+    * Code clarity
+    * Maintainability
+
+    PERFORMANCE (0-20)
+
+    * Efficiency
+    * Memory usage
+    * Scalability
+
+    SECURITY (0-20)
+
+    * Input validation
+    * Sensitive data handling
+    * Security risks
+
+    BEST PRACTICES (0-20)
+
+    * Language conventions
+    * Design quality
+    * Code organization
+
+    TOTAL_SCORE:
+    (sum of all categories, 0-100)
+
+    Scoring Rules:
+
+    0-20 = Very Poor
+    21-40 = Poor
+    41-60 = Average
+    61-80 = Good
+    81-90 = Very Good
+    91-100 = Production Quality
+
+    When generating IMPROVED_CODE:
+
+    * Fix every bug you identify.
+    * Apply all reasonable improvements.
+    * Apply all reasonable optimizations.
+    * Follow modern best practices.
+    * Generate code that would score at least 95/100 under this rubric.
+    * Do not leave known issues unfixed.
+
+    Give your response in this EXACT format:
+
+    CORRECTNESS: <score>/20
+    READABILITY: <score>/20
+    PERFORMANCE: <score>/20
+    SECURITY: <score>/20
+    BEST_PRACTICES: <score>/20
+
+    TOTAL_SCORE: <score>/100
 
     BUGS:
-    - bullet points only
+
+    * bullet points only
 
     IMPROVEMENTS:
-    - bullet points only
+
+    * bullet points only
 
     OPTIMIZATIONS:
-    - bullet points only
+
+    * bullet points only
 
     IMPROVED_CODE:
     <only code here, no markdown, no backticks>
 
     ADDITIONAL_NOTES:
-    - bullet points only
+
+    * bullet points only
 
     Keep the response clean and professional.
     Do NOT use markdown.
-    Do NOT use ###.
+    Do NOT use ###
     Do NOT use ```.
 
     Programming Language:
@@ -132,6 +183,7 @@ def review_code(
 
     Code:
     {code}
+
     """
 
     try:
