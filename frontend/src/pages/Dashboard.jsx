@@ -147,10 +147,6 @@ function Dashboard() {
             My Reviews
           </Link>
 
-          <Link to="/github-review">
-            GitHub Analyzer
-          </Link>
-
           <button
             className="logout-btn"
             onClick={handleLogout}

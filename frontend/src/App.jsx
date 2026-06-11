@@ -5,7 +5,6 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import MyReviews from "./pages/MyReviews";
-import GithubReview from "./pages/GithubReview";
 
 function App() {
   return (
@@ -51,10 +50,7 @@ function App() {
           path="/dashboard"
           element={<Dashboard />}
         />
-        <Route
-          path="/github-review"
-          element={<GithubReview />}
-        />
+        
         <Route
           path="/my-reviews"
           element={<MyReviews />}
