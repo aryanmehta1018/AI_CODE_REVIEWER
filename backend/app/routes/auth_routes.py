@@ -14,7 +14,8 @@ from app.utils.ai_reviewer import (
     collect_code_files,
     fetch_file_contents,
     review_repository,
-    review_repository_files
+    review_repository_files,
+    summarize_repository_reviews
 )
 from fastapi import Depends
 import json
@@ -188,7 +189,12 @@ def github_review(data: dict):
         files
     )
 
+    summary = summarize_repository_reviews(
+        reviews
+    )
+
     return {
         "files_analyzed": len(reviews),
+        "repository_summary": summary,
         "reviews": reviews
     }

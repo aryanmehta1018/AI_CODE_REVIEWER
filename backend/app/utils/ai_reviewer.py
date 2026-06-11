@@ -463,3 +463,60 @@ Code:
 
         return str(e)
     
+def summarize_repository_reviews(reviews):
+
+    combined_reviews = ""
+
+    for item in reviews:
+
+        combined_reviews += (
+            f"\nFILE: {item['file']}\n"
+            f"{item['review']}\n"
+        )
+
+    prompt = f"""
+You are a senior software architect.
+
+Below are reviews generated for every file
+in a GitHub repository.
+
+{combined_reviews}
+
+Generate:
+
+OVERALL_SCORE:
+(number between 0 and 100)
+
+ARCHITECTURE:
+- bullet points
+
+SECURITY:
+- bullet points
+
+PERFORMANCE:
+- bullet points
+
+BEST_PARTS:
+- bullet points
+
+TOP_10_FIXES:
+- bullet points
+"""
+
+    try:
+
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+
+        return str(e)
