@@ -24,14 +24,26 @@ def parse_review(response_text):
 
         line = line.rstrip()
 
-        if line.startswith("SCORE:"):
+        if line.startswith("TOTAL_SCORE:"):
 
             try:
-                sections["score"] = int(
-                    line.replace("SCORE:", "").strip()
+
+                score_text = (
+                    line.replace(
+                        "TOTAL_SCORE:",
+                        ""
+                    )
+                    .replace(
+                        "/100",
+                        ""
+                    )
+                    .strip()
                 )
 
+                sections["score"] = int(score_text)
+
             except:
+
                 sections["score"] = 0
 
             continue
