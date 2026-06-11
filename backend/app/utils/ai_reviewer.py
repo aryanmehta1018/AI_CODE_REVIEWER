@@ -114,58 +114,37 @@ def get_repo_info(repo_url):
 
     return owner, repo
 
-def get_default_branch(owner, repo):
 
-    url = (
-        f"https://api.github.com/repos/"
-        f"{owner}/{repo}"
-    )
-
-    response = requests.get(
-        url,
-        headers={
-            "Authorization": f"Bearer {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github+json"
-        },
-        timeout=20
-    )
-
-    if response.status_code != 200:
-        return None
-
-    return response.json().get(
-        "default_branch"
-    )
 
 def collect_code_files(owner, repo):
 
-    branch = get_default_branch(
-        owner,
-        repo
-    )
+    branches_to_try = ["main", "master"]
 
-    if not branch:
+    data = None
+
+    for branch in branches_to_try:
+
+        url = (
+            f"https://api.github.com/repos/"
+            f"{owner}/{repo}/git/trees/"
+            f"{branch}?recursive=1"
+        )
+
+        response = requests.get(
+            url,
+            headers={
+                "Authorization": f"Bearer {GITHUB_TOKEN}",
+                "Accept": "application/vnd.github+json"
+            },
+            timeout=20
+        )
+
+        if response.status_code == 200:
+            data = response.json()
+            break
+
+    if not data:
         return []
-
-    url = (
-        f"https://api.github.com/repos/"
-        f"{owner}/{repo}/git/trees/"
-        f"{branch}?recursive=1"
-    )
-
-    response = requests.get(
-        url,
-        headers={
-            "Authorization": f"Bearer {GITHUB_TOKEN}",
-            "Accept": "application/vnd.github+json"
-        },
-        timeout=20
-    )
-
-    if response.status_code != 200:
-        return []
-
-    data = response.json()
 
     collected = []
 
