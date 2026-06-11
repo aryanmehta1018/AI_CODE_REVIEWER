@@ -147,8 +147,6 @@ def collect_code_files(owner, repo):
         if path.endswith(ALLOWED_EXTENSIONS):
             collected.append(path)
 
-        if len(collected) >= 10:
-            break
 
     return collected
 
@@ -306,10 +304,10 @@ def review_repository_files(
                 "text"
             )
 
-            review = review_code(
+            review = review_repo_file(
                 code,
                 language
-            )["review"]
+            )
 
             results.append({
                 "file": file_path,
@@ -421,4 +419,47 @@ def review_code(
 
     except Exception as e:
         return f"AI service temporarily unavailable: {str(e)}"
+    
+def review_repo_file(
+    code,
+    language
+):
+
+    prompt = f"""
+You are an expert software engineer.
+
+Review this file.
+
+Provide ONLY:
+
+SCORE:
+BUGS:
+IMPROVEMENTS:
+OPTIMIZATIONS:
+ADDITIONAL_NOTES:
+
+Programming Language:
+{language}
+
+Code:
+{code}
+"""
+
+    try:
+
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+
+        return str(e)
     
