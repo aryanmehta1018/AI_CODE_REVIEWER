@@ -260,6 +260,70 @@ Additional Notes:
         return {
             "error": str(e)
         }
+    
+def review_repository_files(
+    owner,
+    repo,
+    files
+):
+
+    results = []
+
+    for file_path in files:
+
+        try:
+
+            code = fetch_file_contents(
+                owner,
+                repo,
+                [file_path]
+            )
+
+            if not code.strip():
+                continue
+
+            extension = (
+                file_path.split(".")[-1]
+                .lower()
+            )
+
+            language_map = {
+                "py": "python",
+                "js": "javascript",
+                "jsx": "javascript",
+                "ts": "typescript",
+                "tsx": "typescript",
+                "java": "java",
+                "cpp": "cpp",
+                "c": "c",
+                "cs": "csharp",
+                "go": "go",
+                "php": "php"
+            }
+
+            language = language_map.get(
+                extension,
+                "text"
+            )
+
+            review = review_code(
+                code,
+                language
+            )
+
+            results.append({
+                "file": file_path,
+                "review": review
+            })
+
+        except Exception as e:
+
+            results.append({
+                "file": file_path,
+                "error": str(e)
+            })
+
+    return results
 
 def test_github_api(owner, repo):
 
