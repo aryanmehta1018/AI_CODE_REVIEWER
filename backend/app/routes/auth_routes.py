@@ -182,7 +182,13 @@ def github_review(data: dict):
         repo
     )
 
+    reviews = review_repository_files(
+        owner,
+        repo,
+        files
+    )
+
     return {
-        "files_found": len(files),
-        "files": files
+        "files_analyzed": len(reviews),
+        "reviews": reviews
     }
